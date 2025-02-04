@@ -1,4 +1,5 @@
 library("tidyverse")
+library("haven")
 
 folder_path <- "//tsclient/O/+Regional Economy+/สำนักงานสถิติ/Microdata/11 LFS/LFS/LFS 2559 (2016)"
 file_ext <- ".sav"
