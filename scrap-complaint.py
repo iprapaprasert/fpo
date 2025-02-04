@@ -1,0 +1,144 @@
+from selenium import webdriver
+from selenium.webdriver.support.ui import Select
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+import time
+import pandas as pd
+
+# Set your login credentials here
+USERNAME = ""  # Replace with actual username
+PASSWORD = "" # Replace with actual password
+
+# Path to your Chrome WebDriver (Update this path if necessary)
+chrome_options = webdriver.ChromeOptions()
+
+# Initialize Selenium WebDriver
+driver = webdriver.Chrome(options=chrome_options)
+
+# Open the website
+url = "https://opm.1111.go.th/Timeline/Index"
+driver.get(url)
+
+# Wait for elements to load
+time.sleep(3)
+
+# Click the "รับทราบ/Agree" button
+try:
+    agree_button = driver.find_element(By.CLASS_NAME, "accept-agreement")
+    agree_button.click()
+    time.sleep(2)  # Wait for the login page to load
+except Exception as e:
+    print("Error clicking the agreement button:", e)
+
+# Enter username
+username_input = driver.find_element(By.ID, "username_txt")
+username_input.clear()
+username_input.send_keys(USERNAME)
+
+# Enter password
+password_input = driver.find_element(By.ID, "password_txt")
+password_input.clear()
+password_input.send_keys(PASSWORD)
+
+# Press Enter to log in
+password_input.send_keys(Keys.RETURN)
+time.sleep(2)  # Wait for login process
+
+# Click the submit button (instead of pressing Enter)
+try:
+    advance_search_button = driver.find_element(By.CLASS_NAME, "advance-search")
+    advance_search_button.click()
+    time.sleep(5)  # Wait for login to process
+except Exception as e:
+    print("Error clicking the Advance Search button:", e)
+
+# Select the first dropdown (id="ddl_search_case_organization") with value "3"
+select_org = Select(driver.find_element(By.ID, "ddl_search_case_organization"))
+select_org.select_by_value("3")  # Selecting organization 3
+time.sleep(1)
+
+# Select the second dropdown (id="ddl_search_case_organizationx") with value "302"
+select_orgx = Select(driver.find_element(By.ID, "ddl_search_case_organizationx"))
+select_orgx.select_by_value("302")  # Selecting sub-organization 302
+time.sleep(1)
+
+# Select date from the datepicker (id="hasDatepicker")
+date_from_input = driver.find_element(By.ID, "txt_search_date_from")
+date_from_input.clear()
+date_from_input.send_keys("01/12/2567")  # Start date (in Buddhist Calendar format)
+date_from_input.send_keys(Keys.RETURN)
+time.sleep(1)
+
+date_to_input = driver.find_element(By.ID, "txt_search_date_to")
+date_to_input.clear()
+date_to_input.send_keys("31/12/2567")  # End date (same as start date)
+date_to_input.send_keys(Keys.RETURN)
+time.sleep(1)
+
+# Click the "Search" button (adjust selector as needed)
+try:
+    # Wait for the search button to be clickable
+    search_button = driver.find_element(By.ID, "button_advance_search")
+    
+    # Scroll to the element (if it's out of view)
+    driver.execute_script("arguments[0].scrollIntoView(true);", search_button)
+    time.sleep(1)  # Allow time for scrolling
+    
+    # Try clicking using JavaScript (for dynamic buttons)
+    driver.execute_script("arguments[0].click();", search_button)
+    
+    time.sleep(20)  # Wait for results to load
+except Exception as e:
+    print("Error clicking the search button:", e)
+
+# Extract table data from div class="search-advance-result"
+all_data = []
+while True:
+    try:
+        table_div = WebDriverWait(driver, 200).until(
+            EC.presence_of_element_located((By.CLASS_NAME, "datagrid-case"))
+        )
+        
+        tfoot = driver.find_element(By.TAG_NAME, "tfoot")
+        # Scroll to the element (if it's out of view)
+        driver.execute_script("arguments[0].scrollIntoView(true);", tfoot)
+
+        # Extract the table header (only on first page)
+        if not all_data:
+            thead = table_div.find_element(By.TAG_NAME, "thead")
+            headers = [th.text.strip() for th in thead.find_elements(By.TAG_NAME, "th")]
+
+        # Extract the table body (tbody)
+        tbody = table_div.find_element(By.TAG_NAME, "tbody")
+        table_rows = tbody.find_elements(By.TAG_NAME, "tr")
+
+        # Check if the table shows "ไม่พบข้อมูลที่ต้องการค้นหา" (no more data)
+        if not table_rows:
+            break
+
+        # Extract row data from current page
+        for row in table_rows:
+            cells = row.find_elements(By.TAG_NAME, "td")
+            row_data = [cell.text.strip() for cell in cells]
+            print(row_data)
+            all_data.append(row_data)
+
+        # Try to find the "Next" button for pagination
+        next_button = driver.find_element(By.CLASS_NAME, "next-page.page-control")
+        # Scroll to the element (if it's out of view)
+        driver.execute_script("arguments[0].scrollIntoView(true);", next_button)
+        driver.execute_script("arguments[0].click();", next_button)
+        time.sleep(20)  # Wait for new data to load
+
+    except Exception as e:
+        print("Error extracting table data or pagination:", e)
+        break
+
+# Close the browser
+driver.quit()
+
+# Convert to DataFrame and display
+df = pd.DataFrame(all_data, columns=headers)
+print(df.head(100))
