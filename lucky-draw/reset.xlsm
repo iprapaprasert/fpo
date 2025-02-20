@@ -1,0 +1,22 @@
+Sub Reset()
+    Dim mainSheet As Worksheet, remainSheet As Worksheet, eliminateSheet As Worksheet, resultSheet As Worksheet, fullSheet As Worksheet
+    
+    Set mainSheet = ThisWorkbook.Sheets("main")
+    Set remainSheet = ThisWorkbook.Sheets("remaining")
+    Set eliminateSheet = ThisWorkbook.Sheets("eliminated")
+    Set resultSheet = ThisWorkbook.Sheets("result")
+    Set fullSheet = ThisWorkbook.Sheets("full")
+
+    ' Clear data from row 2 onward in Remaining, Eliminated, and Result sheets
+    remainSheet.Rows("2:" & remainSheet.Rows.Count).ClearContents
+    eliminateSheet.Rows("2:" & eliminateSheet.Rows.Count).ClearContents
+    resultSheet.Rows("2:" & resultSheet.Rows.Count).ClearContents
+
+    ' Find the last row in the Full sheet
+    lastRowFull = fullSheet.Cells(fullSheet.Rows.Count, 1).End(xlUp).Row
+
+    ' Copy all data from Full sheet to Remaining sheet
+    fullSheet.Rows("1:" & lastRowFull).Copy Destination:=remainSheet.Rows(1)
+
+    MsgBox "Reset complete and data transferred successfully!", vbInformation
+End Sub
