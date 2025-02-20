@@ -1,0 +1,31 @@
+Sub ClearAndEliminate()
+    Dim mainSheet As Worksheet, remainSheet As Worksheet, eliminateSheet As Worksheet
+    Dim id As String
+    Dim lastRow As Long, i As Long
+    Dim data As Variant
+
+    Set mainSheet = ThisWorkbook.Sheets("main")
+    Set remainSheet = ThisWorkbook.Sheets("remaining")
+    Set eliminateSheet = ThisWorkbook.Sheets("eliminated")
+
+    id = mainSheet.Range("B6").Value & mainSheet.Range("F6").Value & mainSheet.Range("J6").Value
+
+    If id <> "" Then
+        ' Get the data from the "remaining" sheet (excluding the header)
+        lastRow = remainSheet.Cells(remainSheet.Rows.Count, 1).End(xlUp).Row
+        If lastRow > 1 Then
+            data = remainSheet.Range(remainSheet.Cells(2, 1), remainSheet.Cells(lastRow, 4)).Value
+
+            ' Loop through the data to find the matching ID
+            For i = LBound(data, 1) To UBound(data, 1)
+                If data(i, 1) = id Then
+                    eliminateSheet.Cells(eliminateSheet.Rows.Count, 1).End(xlUp).Offset(1, 0).Resize(1, 4).Value = Application.Index(data, i, 0)
+                    remainSheet.Rows(i + 1).Delete
+                    Exit For
+                End If
+            Next i
+        End If
+    End If
+
+    mainSheet.Range("B6:L31").ClearContents
+End Sub
