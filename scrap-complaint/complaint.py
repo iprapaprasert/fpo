@@ -10,8 +10,8 @@ import pandas as pd
 import time
 
 # Set your login credentials here
-USERNAME = "CPMFN036"  # Replace with actual username
-PASSWORD = "Phattrapo_Ku" # Replace with actual password
+USERNAME = ""  # Replace with actual username
+PASSWORD = "" # Replace with actual password
 
 # Set the start date and end date
 today = datetime.today()
@@ -38,7 +38,7 @@ chrome_options = webdriver.ChromeOptions()
 driver = webdriver.Chrome(options=chrome_options)
 
 # Open the website
-url = "https://opm.1111.go.th/Timeline/Index"
+url = ""
 driver.get(url)
 
 # Wait for elements to load
