@@ -1,0 +1,44 @@
+Sub DrawFromRemain()
+    Dim remainSheet As Worksheet, resultSheet As Worksheet, mainSheet As Worksheet
+    Dim data As Variant, person As Variant
+    Dim lastRow As Long, randomIndex As Long
+    Dim prize As String
+
+    Set remainSheet = ThisWorkbook.Sheets("remaining")
+    Set resultSheet = ThisWorkbook.Sheets("result")
+    Set mainSheet = ThisWorkbook.Sheets("main")
+    
+    ' Warning message
+    If mainSheet.Range("B6").Value <> "" Then
+        MsgBox "You have to clear & delete or marks as leaving early before draw another winner!", vbExclamation, "Warning"
+        Exit Sub
+    End If
+    
+    lastRow = remainSheet.Cells(remainSheet.Rows.Count, 1).End(xlUp).Row
+    If lastRow <= 1 Then Exit Sub
+
+    data = remainSheet.Range(remainSheet.Cells(2, 1), remainSheet.Cells(lastRow, 4)).Value
+
+    startTime = Timer
+    Do While Timer - startTime < 3#
+        Randomize
+        randomIndex = Int((UBound(data, 1) - LBound(data, 1) + 1) * Rnd + LBound(data, 1))
+        person = Application.Index(data, randomIndex, 0)
+
+        ' Update the "main" sheet with the selected person
+        mainSheet.Range("B6").Value = Left(person(1), 1) ' ID
+        mainSheet.Range("F6").Value = Mid(person(1), 2, 1) ' ID
+        mainSheet.Range("J6").Value = Right(person(1), 1) ' ID
+        mainSheet.Range("B20").Value = person(2) ' Name
+        mainSheet.Range("B28").Value = person(3) 'Dept
+        
+        DoEvents
+    Loop
+
+    prize = mainSheet.Range("F4").Value
+
+    ' Append the selected person and prize to the "result" sheet
+    With resultSheet
+        .Cells(.Rows.Count, 1).End(xlUp).Offset(1, 0).Resize(1, 4).Value = Array(CStr(person(1)), person(2), person(3), prize)
+    End With
+End Sub
