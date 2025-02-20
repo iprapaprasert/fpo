@@ -4,7 +4,7 @@ import os
 def upload_to_drive(file_path, folder_id):
     try:
         gauth = GoogleAuth()
-        gauth.settings['client_config_file'] = r'C:/notebooks/selenium/client_secrets.json'
+        gauth.settings['client_config_file'] = r""
         gauth.LocalWebserverAuth()
         drive = GoogleDrive(gauth)
         file_name = os.path.basename(file_path)

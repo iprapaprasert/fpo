@@ -26,10 +26,10 @@ else:
 # Set the output path
 start_dt_file_fm = start_date.strftime("%Y%m%d")
 end_dt_file_fm = end_date.strftime("%Y%m%d")
-output_filename = f"C:/Boom/complaint/complaint_{start_dt_file_fm}_{end_dt_file_fm}.xlsx"
+output_filename = f"C:/complaint/complaint_{start_dt_file_fm}_{end_dt_file_fm}.xlsx"
 
 # Set Google Drive folder
-GDRIVE_FOLDER = "1LYDtnNZoq_9hoF7l2o5b1FMJQnoje9yM"
+GDRIVE_FOLDER = ""
 
 # Path to your Chrome WebDriver (Update this path if necessary)
 chrome_options = webdriver.ChromeOptions()
