@@ -10,26 +10,26 @@ import pandas as pd
 import time
 
 # Set your login credentials here
-USERNAME = ""  # Replace with actual username
-PASSWORD = "" # Replace with actual password
+USERNAME = "CPMFN036"  # Replace with actual username
+PASSWORD = "Phattrapo_Ku" # Replace with actual password
 
 # Set the start date and end date
 today = datetime.today()
 today_be = today.replace(year=today.year + 543)
-if today.day <= 15:
+if today_be.day <= 15:
     start_date = today_be.replace(day=1)
     end_date = today_be.replace(day=15)
 else:
-    start_date = today.replace(day=16)
-    end_date = today.replace(day=calendar.monthrange(today.year, today.month)[1])
+    start_date = today_be.replace(day=16)
+    end_date = today_be.replace(day=calendar.monthrange(today.year, today.month)[1])
 
 # Set the output path
 start_dt_file_fm = start_date.strftime("%Y%m%d")
 end_dt_file_fm = end_date.strftime("%Y%m%d")
-output_filename = f"C:_{start_dt_file_fm}_{end_dt_file_fm}.xlsx"
+output_filename = f"C:/Boom/complaint/complaint_{start_dt_file_fm}_{end_dt_file_fm}.xlsx"
 
 # Set Google Drive folder
-GDRIVE_FOLDER = ""
+GDRIVE_FOLDER = "1LYDtnNZoq_9hoF7l2o5b1FMJQnoje9yM"
 
 # Path to your Chrome WebDriver (Update this path if necessary)
 chrome_options = webdriver.ChromeOptions()
@@ -38,7 +38,7 @@ chrome_options = webdriver.ChromeOptions()
 driver = webdriver.Chrome(options=chrome_options)
 
 # Open the website
-url = ""
+url = "https://opm.1111.go.th/Timeline/Index"
 driver.get(url)
 
 # Wait for elements to load
