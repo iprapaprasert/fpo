@@ -92,8 +92,9 @@ date_from_input.send_keys(Keys.RETURN)
 time.sleep(1)
 
 date_to_input = driver.find_element(By.ID, "txt_search_date_to")
+date_to_input.send_keys(end_date.strftime("%d/%m/%Y")) # End date (same as start date)
 date_to_input.clear()
-date_to_input.send_keys(end_date.strftime("%d/%m/%Y"))  # End date (same as start date)
+date_to_input.send_keys(end_date.strftime("%d/%m/%Y")) # End date (same as start date)
 date_to_input.send_keys(Keys.RETURN)
 time.sleep(1)
 
