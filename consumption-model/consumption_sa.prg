@@ -1,16 +1,18 @@
 ' define
 %path = "z:\databank\consumption\consumption.xlsx"
-%sa_vars = "vat dom_vat imp_vat rvat dom_rvat imp_rvat sedan_new_reg moto_new_reg psg_car_sales"
+%sa_vars = "vat dom_vat imp_vat rvat dom_rvat imp_rvat sedan_new_reg sedan_ev_new_reg moto_new_reg psg_car_sales"
 
 ' import sheet and create series
 import(page=monthly) %path range=input colhead=1 na="#N/A" @id @date(date) @smpl @all
 
 series vat = dom_vat + imp_vat
-series imp_price_idx_2019 = imp_price_idx / @meansby(imp_price_idx, @crossid, "2019m01 2019m12") * 100
 
-' generate real vat, based year 2019
+' generate import price index, based year 2023
+series imp_price_idx = imp_price_idx / @meansby(imp_price_idx, @crossid, "2023m01 2023m12") * 100
+
+' generate real vat, based year 2023
 series dom_rvat = dom_vat / headline_cpi * 100
-series imp_rvat = imp_vat / imp_price_idx_2019 * 100
+series imp_rvat = imp_vat / imp_price_idx * 100
 series rvat = dom_rvat + imp_rvat
 ' generate monthly seasonally adjusted x13
 for %s {%sa_vars}
@@ -40,3 +42,5 @@ wfsave(2, type=excelxml, na="", mode=update) %path range="monthly!b4" ' @keep st
 pageselect quarterly
 'alpha strdate = @datestr(@date, "YYYY-MM-DD")
 wfsave(2, type=excelxml, na="", mode=update) %path range="quarterly!b4" '@keep strdate *
+
+
