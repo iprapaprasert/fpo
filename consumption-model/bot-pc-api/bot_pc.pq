@@ -2,6 +2,8 @@ let
     // If the code goes error, "Formula.Firewall: Query references other queries, so it may not directly access a data source."
     // Go to Data tab -> expand Get Data -> Query Options -> Privacy -> Always ignore Privacy Level settings -> OK
 
+    // BOT frequently update the series category and then the series codes. Use the get_series_code_bot_pci.py to update series code for each series
+
     // Define the API base URL
     BaseURL = "https://apigw1.bot.or.th/bot/public/observations/",
 
