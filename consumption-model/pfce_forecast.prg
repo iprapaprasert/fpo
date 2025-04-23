@@ -35,4 +35,31 @@ equation midas_pfce.midas(maxlag=9, lag=auto) @pcy(pfce_r) c @pcy(pfce_r(-1)) @ 
 smpl @all if pfce_r = na
 midas_pfce.forecast(e, g) pfce_r_f_midas
 smpl @all
-show pfce_r pfce_r_f_ls pfce_r_f_midas
+group pfce_forecast pfce_r pfce_r_f_ls pfce_r_f_midas
+show pfce_forecast
+
+' forecast pfce with adding factor
+series pfce_r_a = @recode(@after("2022Q1"), 2, NA)
+
+model model_ls.merge ls_pfce
+model_ls.scenario(n, a=ls) "add factor"
+model_ls.addassign(i) pfce_r
+smpl @all if pfce_r = na
+model_ls.solveopt(s=a)
+model_ls.solve
+
+model model_midas.merge midas_pfce
+model_midas.scenario(n, a=md) "add factor"
+model_midas.addassign(i) pfce_r
+smpl @all if pfce_r = na
+model_midas.solveopt(s=a)
+model_midas.solve
+
+smpl @all
+group pfce_forecast_ls pfce_r_f_ls pfce_r_lsm pfce_r_lsl pfce_r_lsh
+group pfce_forecast_md pfce_r_f_midas pfce_r_mdm pfce_r_mdl pfce_r_mdh
+show pfce_forecast_ls
+show pfce_forecast_md
+
+
+
